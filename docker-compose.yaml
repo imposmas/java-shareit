@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   server:
     build: .
@@ -6,11 +7,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
-      - SPRING_DATASOURCE_USERNAME=shareit
-      - SPRING_DATASOURCE_PASSWORD=shareit
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shareit
+      SPRING_DATASOURCE_USERNAME: shareit
+      SPRING_DATASOURCE_PASSWORD: shareit
 
   db:
     image: postgres:16.1
@@ -18,11 +20,11 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_PASSWORD=shareit
-      - POSTGRES_USER=shareit
-      - POSTGRES_DB=shareit
+      POSTGRES_PASSWORD: shareit
+      POSTGRES_USER: shareit
+      POSTGRES_DB: shareit
     healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
+      timeout: 5s
       retries: 10
