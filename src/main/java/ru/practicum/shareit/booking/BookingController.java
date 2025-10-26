@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingResponseDto> createBooking(@RequestHeader(USER_HEADER) Long userId,
-                                                            @RequestBody BookingDto dto) {
+                                                            @Valid @RequestBody BookingDto dto) {
         BookingResponseDto created = bookingService.createBooking(userId, dto);
         return ResponseEntity.ok(created);
     }
