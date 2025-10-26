@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -57,5 +58,13 @@ public class ItemController {
         log.info("ItemController searchItems: text = {}", text);
         List<ItemDto> result = itemService.searchItems(text);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDto> addComment(@RequestHeader(USER_HEADER) Long userId,
+                                                 @PathVariable Long itemId,
+                                                 @RequestBody @Valid CommentDto commentDto) {
+        CommentDto created = itemService.addComment(userId, itemId, commentDto);
+        return ResponseEntity.ok(created);
     }
 }
