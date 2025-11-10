@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.common.exceptions.ErrorResponse;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,6 +19,7 @@ public class GatewayExceptionHandler {
                 .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .reduce((s1, s2) -> s1 + "; " + s2)
                 .orElse(e.getMessage());
+        log.error("Ошибка валидации входных данных: {}", message, e);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -28,6 +28,7 @@ public class GatewayExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+        log.error("Внутренняя ошибка на уровне Gateway: {}", e.getMessage(), e);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("Gateway error", e.getMessage()));
